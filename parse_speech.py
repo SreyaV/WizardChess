@@ -47,7 +47,7 @@ def read_json(path):
 
 def voice_input(audio, r):
     # recognize speech using Google Cloud Speech
-    GOOGLE_CLOUD_SPEECH_CREDENTIALS = r"/Users/jlchew/Downloads/MakeMIT 2019-acab376edd58.json"
+    #GOOGLE_CLOUD_SPEECH_CREDENTIALS = 
     try:
         speech = (r.recognize_google_cloud(audio, preferred_phrases = ["alpha", "bravo", "charlie", "delta", "echo", "foxtrot", "golf", "hotel", "one", "two", "three", "four", "five", "six", "seven", "eight", "move"], credentials_json=json.dumps(read_json(GOOGLE_CLOUD_SPEECH_CREDENTIALS))))
         #speech = (r.recognize_google_cloud(audio, credentials_json=json.dumps(read_json(GOOGLE_CLOUD_SPEECH_CREDENTIALS)))
