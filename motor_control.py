@@ -1,11 +1,12 @@
 import serial
 import time
+import math
 
 
 class MotorController:
     def __init__(self):
         # Open grbl serial port
-        self.serial_instance = serial.Serial('/dev/ttyUSB3', 115200)
+        self.serial_instance = serial.Serial('/dev/tty.usbserial-DN05JLOK', 115200)
 
         # Wake up grbl
         self.serial_instance.write("\r\n\r\n")
@@ -16,7 +17,7 @@ class MotorController:
         grbl_out = self.serial_instance.readline()  # Wait for grbl response with carriage return
         print(' : ' + grbl_out.strip())
 
-    def move_to(self, x, y, feedrate=100.0):
+    def move_to(self, x, y, feedrate=1000.0):
         """
         Move magnet to x, y location at feedrate
         :param x: loc to move
@@ -35,7 +36,7 @@ class MotorController:
         lastX = 0
         lastY = 0
 
-        time_to_wait = dist(x, y, lastX, lastY) / feedrate * 60.0 + 0.25
+        time_to_wait = self.dist(x, y, lastX, lastY) / feedrate * 60.0 + 0.25
         time.sleep(time_to_wait)
 
     def __del__(self):
@@ -57,5 +58,5 @@ class MotorController:
         time.sleep(6)
         self.move_magnet(0, 0)
 
-    def dist(x1, y1, x2, y2):
-        return sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
+    def dist(self,x1, y1, x2, y2):
+        return math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)

@@ -2,8 +2,8 @@ from enum import Enum
 from motor_control import MotorController
 
 IN_PER_SEC = 150.0
-FAST_FEED_RATE = 5 * IN_PER_SEC
-SLOW_FEED_RATE = 1 * IN_PER_SEC
+FAST_FEED_RATE = 2000
+SLOW_FEED_RATE =  750
 
 class PieceType(Enum):
     PAWN = 1
@@ -29,15 +29,15 @@ class Board:
         pieceOrder = [PieceType.ROOK, PieceType.KNIGHT, PieceType.BISHOP, PieceType.QUEEN,\
             PieceType.KING, PieceType.BISHOP, PieceType.KNIGHT, PieceType.ROOK]
         for i in range(8):
-            self.grid[0][i] = Piece(pieceOrder[i], BLACK)
-            self.grid[1][i] = Piece(PieceType.PAWN, BLACK)
-            self.grid[6][i] = Piece(PieceType.PAWN, WHITE)
-            self.grid[7][i] = Piece(pieceOrder[i], WHITE)
-        self.length = 635
+            self.grid[0][i] = Piece(pieceOrder[i], Team.BLACK)
+            self.grid[1][i] = Piece(PieceType.PAWN, Team.BLACK)
+            self.grid[6][i] = Piece(PieceType.PAWN, Team.WHITE)
+            self.grid[7][i] = Piece(pieceOrder[i], Team.WHITE)
+        self.length = 400
         #self.diagonal = 898
     def move_piece(startX, startY, endX, endY):
-        if not is_move_legal(startX, startY, endX, endY):
-            return False
+        #if not is_move_legal(startX, startY, endX, endY):
+            #return False
         if self.grid[endX][endY] != None:
             self.cnc.move_to(endX, endY, FAST_FEED_RATE)
             self.cnc.kill_piece()
@@ -47,11 +47,11 @@ class Board:
         if startX == endX or startY == endY or abs(startY - endY) == abs(startX - endX):
             # if moving horizontally, vertically, or diagonally
             self.cnc.move_to(endX, endY, SLOW_FEED_RATE)
-        else if abs(startX - endX) == 1 and abs(startY - endY) == 2:
+        elif abs(startX - endX) == 1 and abs(startY - endY) == 2:
             self.cnc.move_to(0.5 * (startX + endX), startY, SLOW_FEED_RATE)
             self.cnc.move_to(0.5 * (startX + endX), endY, SLOW_FEED_RATE)
             self.cnc.move_to(endX, endY, SLOW_FEED_RATE)
-        else if abs(startX - endX) == 1 and abs(startY - endY) == 2:
+        elif abs(startX - endX) == 1 and abs(startY - endY) == 2:
             self.cnc.move_to(startX, (startY + endY) * 0.5, SLOW_FEED_RATE)
             self.cnc.move_to(endX, (startY + endY) * 0.5, SLOW_FEED_RATE)
             self.cnc.move_to(endX, endY, SLOW_FEED_RATE)
@@ -76,8 +76,8 @@ class Board:
         else:
             return False
 
-    def findcoordinates(command):
+    def findcoordinates(self,command):
         coordinates = []
         for coord in command:
-            coordinates.append(self.length/2 + (coord-1)*self.length)
+            coordinates.append(self.length/2 + (int(coord)-1)*self.length)
         return coordinates

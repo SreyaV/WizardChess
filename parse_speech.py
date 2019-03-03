@@ -121,6 +121,7 @@ def get_command():
         os.system("mpg321 next.mp3")
         print("Talk now")
         audio = r.listen(source)
+        #audio = r.listen(source, snowboy_configuration = snowboy)
     speech = voice_input(audio, r)
     #speech = "Alpha One move hotel to"
     command = parse_speech(speech)
@@ -138,14 +139,14 @@ def get_command():
         #engine.say("Sorry, I didn't get that. Please try again")
         #engine.runAndWait()
 
-    for i in range(0, command):
+    for i in range(0, len(command)):
         if command[i] in alphanumeric:
             command[i] = alphanumeric[command[i]]
     command = command[ :2] + command[3: ]
     return command
 
 
-snowboy_configuration = ("/Users/jlchew/Downloads/osx-x86_64-1.1.1", ["/Users/jlchew/Downloads/osx-x86_64-1.1.1/chess.pmdl"])
+snowboy = ("/Users/jlchew/Downloads/osx-x86_64-1.1.1", ["/Users/jlchew/Downloads/osx-x86_64-1.1.1/chess.pmdl"])
 
 legal_words = ["alpha", "bravo", "charlie", "delta", "echo", "foxtrot", "golf", "hotel", "one", "two", "three", "four", "five", "six", "seven", "eight"]
 
@@ -160,4 +161,4 @@ tts.save("error.mp3")
 tts = gTTS(text='Next move please', lang='en')
 tts.save("next.mp3")
 
-print(get_command())
+#print(get_command())

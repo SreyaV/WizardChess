@@ -1,10 +1,16 @@
 from chess_logic import Board
-from parse_speech import get_command
+import parse_speech
+import time
 
 board = Board()
 
-while True:
-    command = get_command()
-    if command:
-        coordinates = board.findcoordinates(command)
-        board.move_piece(coordinates[0], coordinates[1], coordinates[2], coordinates[3])
+#board.cnc.move_to(-100,100)
+try:
+    while True:
+        command = parse_speech.get_command()
+        if command:
+            coordinates = board.findcoordinates(command)
+            board.cnc.move_to(-1*coordinates[2], coordinates[3])
+            time.sleep(5)
+except:
+    board.cnc.move_to(0,0)
