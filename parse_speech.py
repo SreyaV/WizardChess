@@ -1,5 +1,12 @@
 import speech_recognition as sr
 import json
+#import pyttsx
+import objc
+#engine = pyttsx.init()
+from os import system
+from gtts import gTTS
+import os
+
 
 snowboy_configuration = ("/Users/jlchew/Downloads/osx-x86_64-1.1.1", ["/Users/jlchew/Downloads/osx-x86_64-1.1.1/chess.pmdl"])
 
@@ -8,6 +15,10 @@ legal_words = ["alpha", "bravo", "charlie", "delta", "echo", "foxtrot", "golf", 
 alphabet = {"alpha": 'A', "bravo": 'B', "charlie": 'C', "delta":'D', "echo":'E', "foxtrot": 'F', "golf": 'G', "hotel": 'H'}
 
 numbers = {"one": '1', "two": '2', "three": '3', "four": '4', "five": '5', "six": '6', "seven":'7', "eight":'8'}
+
+tts = gTTS(text='Sorry, I did not understand that. Can you try again?', lang='en')
+tts.save("error.mp3")
+#os.system("mpg321 error.mp3")
 
 # obtain audio from the microphone
 
@@ -92,17 +103,20 @@ def parse_speech(speech, legal_words, alphabet, numbers):
     if len(words) > 5:
         return None
     command = []
-    for index in range(0,len(words)):
-        print(words[index])
-        if words[index] in ['move', 'movie'] or words[index][0].lower() == 'm':
-            command.append("to")
-        else:
-            if index == 0 or index == 3:
-                word = common_letters(words[index], alphabet)
+    try:
+        for index in range(0,len(words)):
+            print(words[index])
+            if words[index] in ['move', 'movie'] or words[index][0].lower() == 'm':
+                command.append("to")
             else:
-                word = common_letters(words[index], numbers)
-            command.append(word)
-            print(word)
+                if index == 0 or index == 3:
+                    word = common_letters(words[index], alphabet)
+                else:
+                    word = common_letters(words[index], numbers)
+                command.append(word)
+                print(word)
+    except:
+        return None
 
     return command
 
@@ -114,7 +128,19 @@ with sr.Microphone() as source:
     r.adjust_for_ambient_noise(source)  # we only need to calibrate once, before we start listening
     print("Say something!")
     audio = r.listen(source)
-#speech = voice_input()
-speech = "Alpha One move hotel to"
+speech = voice_input()
+#speech = "Alpha One move hotel to"
 command = parse_speech(speech, legal_words, alphabet, numbers)
-print(command)
+#print(command)
+if command:
+    command = " ".join(command)
+    tts = gTTS(text=command, lang='en')
+    tts.save("move.mp3")
+    os.system("mpg321 move.mp3")
+    #system('say '+command)
+    #engine.say(command)
+    #engine.runAndWait()
+else:
+    os.system("mpg321 error.mp3")
+    #engine.say("Sorry, I didn't get that. Please try again")
+    e#ngine.runAndWait()
