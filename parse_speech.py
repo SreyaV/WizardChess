@@ -2,6 +2,10 @@ import speech_recognition as sr
 import json
 
 snowboy_configuration = ("/Users/jlchew/Downloads/osx-x86_64-1.1.1", ["/Users/jlchew/Downloads/osx-x86_64-1.1.1/chess.pmdl"])
+
+global legal_words = ["alpha", "bravo", "charlie", "delta", "echo", "foxtrot", "golf", "hotel", "one", "two", "three", "four", "five", "six", "seven", "eight", "move"]
+global alphabet = {"alpha": 'A', "bravo": 'B', "charlie": 'C', "delta":'D', "echo":'E', "foxtrot": 'F', "golf": 'G', "hotel": 'H'}
+global numbers = {"one": '1', "two": '2', "three": '3', "four": '4', "five": '5', "six": '6', "seven":'7', "eight:'8'"}
 # obtain audio from the microphone
 
 # keywords = [("alpha", 0.5), ("bravo", 0.5), ("charlie", 0.5), ("delta", 0.5), ("echo", 0.5), ("foxtrot", 0.5), ("golf", 0.5), ("hotel", 0.5)]
@@ -55,9 +59,16 @@ def voice_input():
 
 
 def parse_speech(speech):
-    if speech:
-        print(speech)
-    return None
+    if not speech:
+        return False
+    words = speech.split()
+    command = []
+    for word in words:
+        if word in legal_words:
+            command.append(word)
+        else:
+
+
 
 r = sr.Recognizer()
 with sr.Microphone() as source:
