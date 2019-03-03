@@ -8,16 +8,6 @@ from gtts import gTTS
 import os
 
 
-snowboy_configuration = ("/Users/jlchew/Downloads/osx-x86_64-1.1.1", ["/Users/jlchew/Downloads/osx-x86_64-1.1.1/chess.pmdl"])
-
-legal_words = ["alpha", "bravo", "charlie", "delta", "echo", "foxtrot", "golf", "hotel", "one", "two", "three", "four", "five", "six", "seven", "eight"]
-
-alphabet = {"alpha": 'A', "bravo": 'B', "charlie": 'C', "delta":'D', "echo":'E', "foxtrot": 'F', "golf": 'G', "hotel": 'H'}
-
-numbers = {"one": '1', "two": '2', "three": '3', "four": '4', "five": '5', "six": '6', "seven":'7', "eight":'8'}
-
-tts = gTTS(text='Sorry, I did not understand that. Can you try again?', lang='en')
-tts.save("error.mp3")
 #os.system("mpg321 error.mp3")
 
 # obtain audio from the microphone
@@ -55,12 +45,13 @@ def read_json(path):
     return json.loads(read_file(path))
 
 
-def voice_input():
+def voice_input(audio, r):
     # recognize speech using Google Cloud Speech
     GOOGLE_CLOUD_SPEECH_CREDENTIALS = r"/Users/jlchew/Downloads/MakeMIT 2019-acab376edd58.json"
     try:
         speech = (r.recognize_google_cloud(audio, preferred_phrases = ["alpha", "bravo", "charlie", "delta", "echo", "foxtrot", "golf", "hotel", "one", "two", "three", "four", "five", "six", "seven", "eight", "move"], credentials_json=json.dumps(read_json(GOOGLE_CLOUD_SPEECH_CREDENTIALS))))
         #speech = (r.recognize_google_cloud(audio, credentials_json=json.dumps(read_json(GOOGLE_CLOUD_SPEECH_CREDENTIALS)))
+        print(speech)
         return speech
         #print("Google Cloud Speech thinks you said " + r.recognize_google_cloud(audio, credentials_json=json.dumps(read_json(GOOGLE_CLOUD_SPEECH_CREDENTIALS))))
     except sr.UnknownValueError:
@@ -78,6 +69,8 @@ def common_letters(word, arr):
     word = word.lower()
     if word in arr:
         return arr[word]
+    if word in arr.values():
+        return word
     for possibility in arr.keys():
         print(counter)
         for i in word:
@@ -88,15 +81,15 @@ def common_letters(word, arr):
         if counter > maxmatch:
             match = possibility
             maxmatch = counter
-        print("possibility", possibility, " count is ", counter)
-        print(possibility[0])
+        #print("possibility", possibility, " count is ", counter)
+        #print(possibility[0])
         counter = 0
     return arr[match]
 
 
 
 
-def parse_speech(speech, legal_words, alphabet, numbers):
+def parse_speech(speech):
     if not speech:
         return None
     words = speech.split()
@@ -121,26 +114,50 @@ def parse_speech(speech, legal_words, alphabet, numbers):
     return command
 
 
+def get_command():
+    r = sr.Recognizer()
+    with sr.Microphone() as source:
+        r.adjust_for_ambient_noise(source)  # we only need to calibrate once, before we start listening
+        os.system("mpg321 next.mp3")
+        print("Talk now")
+        audio = r.listen(source)
+    speech = voice_input(audio, r)
+    #speech = "Alpha One move hotel to"
+    command = parse_speech(speech)
+    #print(command)
+    if command:
+        tts = gTTS(text=(" ".join(command)), lang='en')
+        tts.save("move.mp3")
+        os.system("mpg321 move.mp3")
+        #system('say '+command)
+        #engine.say(command)
+        #engine.runAndWait()
+    else:
+        os.system("mpg321 error.mp3")
+        return None
+        #engine.say("Sorry, I didn't get that. Please try again")
+        #engine.runAndWait()
+
+    for i in range(0, command):
+        if command[i] in alphanumeric:
+            command[i] = alphanumeric[command[i]]
+    command = command[ :2] + command[3: ]
+    return command
 
 
-r = sr.Recognizer()
-with sr.Microphone() as source:
-    r.adjust_for_ambient_noise(source)  # we only need to calibrate once, before we start listening
-    print("Say something!")
-    audio = r.listen(source)
-speech = voice_input()
-#speech = "Alpha One move hotel to"
-command = parse_speech(speech, legal_words, alphabet, numbers)
-#print(command)
-if command:
-    command = " ".join(command)
-    tts = gTTS(text=command, lang='en')
-    tts.save("move.mp3")
-    os.system("mpg321 move.mp3")
-    #system('say '+command)
-    #engine.say(command)
-    #engine.runAndWait()
-else:
-    os.system("mpg321 error.mp3")
-    #engine.say("Sorry, I didn't get that. Please try again")
-    e#ngine.runAndWait()
+snowboy_configuration = ("/Users/jlchew/Downloads/osx-x86_64-1.1.1", ["/Users/jlchew/Downloads/osx-x86_64-1.1.1/chess.pmdl"])
+
+legal_words = ["alpha", "bravo", "charlie", "delta", "echo", "foxtrot", "golf", "hotel", "one", "two", "three", "four", "five", "six", "seven", "eight"]
+
+alphabet = {"alpha": 'A', "bravo": 'B', "charlie": 'C', "delta":'D', "echo":'E', "foxtrot": 'F', "golf": 'G', "hotel": 'H'}
+
+numbers = {"one": '1', "two": '2', "three": '3', "four": '4', "five": '5', "six": '6', "seven":'7', "eight":'8'}
+
+alphanumeric = {"A": '1', "B": '2', "C": '3', "D": '4', "E": '5', "F": '6', "G":'7', "H":'8'}
+
+tts = gTTS(text='Sorry, I did not understand that. Can you try again?', lang='en')
+tts.save("error.mp3")
+tts = gTTS(text='Next move please', lang='en')
+tts.save("next.mp3")
+
+print(get_command())
