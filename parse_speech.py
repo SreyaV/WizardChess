@@ -2,13 +2,13 @@ import speech_recognition as sr
 import json
 
 snowboy_configuration = ("/Users/jlchew/Downloads/osx-x86_64-1.1.1", ["/Users/jlchew/Downloads/osx-x86_64-1.1.1/chess.pmdl"])
-<<<<<<< HEAD
 
-global legal_words = ["alpha", "bravo", "charlie", "delta", "echo", "foxtrot", "golf", "hotel", "one", "two", "three", "four", "five", "six", "seven", "eight", "move"]
-global alphabet = {"alpha": 'A', "bravo": 'B', "charlie": 'C', "delta":'D', "echo":'E', "foxtrot": 'F', "golf": 'G', "hotel": 'H'}
-global numbers = {"one": '1', "two": '2', "three": '3', "four": '4', "five": '5', "six": '6', "seven":'7', "eight:'8'"}
-=======
->>>>>>> 309b78936db40e20b12a2dec1c7dc961eb8b8f4c
+legal_words = ["alpha", "bravo", "charlie", "delta", "echo", "foxtrot", "golf", "hotel", "one", "two", "three", "four", "five", "six", "seven", "eight"]
+
+alphabet = {"alpha": 'A', "bravo": 'B', "charlie": 'C', "delta":'D', "echo":'E', "foxtrot": 'F', "golf": 'G', "hotel": 'H'}
+
+numbers = {"one": '1', "two": '2', "three": '3', "four": '4', "five": '5', "six": '6', "seven":'7', "eight":'8'}
+
 # obtain audio from the microphone
 
 # keywords = [("alpha", 0.5), ("bravo", 0.5), ("charlie", 0.5), ("delta", 0.5), ("echo", 0.5), ("foxtrot", 0.5), ("golf", 0.5), ("hotel", 0.5)]
@@ -60,30 +60,61 @@ def voice_input():
         return None
     return None
 
+def common_letters(word, arr):
+    counter = 0
+    maxmatch = 0
+    match=None
+    word = word.lower()
+    if word in arr:
+        return arr[word]
+    for possibility in arr.keys():
+        print(counter)
+        for i in word:
+            if i in possibility:
+                counter = counter + 1
+        if word[0] == possibility[0]:
+            counter = counter+5
+        if counter > maxmatch:
+            match = possibility
+            maxmatch = counter
+        print("possibility", possibility, " count is ", counter)
+        print(possibility[0])
+        counter = 0
+    return arr[match]
 
-def parse_speech(speech):
-<<<<<<< HEAD
+
+
+
+def parse_speech(speech, legal_words, alphabet, numbers):
     if not speech:
-        return False
+        return None
     words = speech.split()
+    if len(words) > 5:
+        return None
     command = []
-    for word in words:
-        if word in legal_words:
-            command.append(word)
+    for index in range(0,len(words)):
+        print(words[index])
+        if words[index] in ['move', 'movie'] or words[index][0].lower() == 'm':
+            command.append("to")
         else:
+            if index == 0 or index == 3:
+                word = common_letters(words[index], alphabet)
+            else:
+                word = common_letters(words[index], numbers)
+            command.append(word)
+            print(word)
+
+    return command
 
 
 
-=======
-    if speech:
-        print(speech)
-    return None
 
->>>>>>> 309b78936db40e20b12a2dec1c7dc961eb8b8f4c
 r = sr.Recognizer()
 with sr.Microphone() as source:
     r.adjust_for_ambient_noise(source)  # we only need to calibrate once, before we start listening
     print("Say something!")
     audio = r.listen(source)
-speech = voice_input()
-parse_speech(speech)
+#speech = voice_input()
+speech = "Alpha One move hotel to"
+command = parse_speech(speech, legal_words, alphabet, numbers)
+print(command)
