@@ -69,9 +69,9 @@ class Board:
         # TODO make work properly
         if startX == endX or startY == endY or abs(startY - endY) == abs(startX - endX):
             return True
-        else if abs(startX - endX) == 1 and abs(startY - endY) == 2:
+        elif abs(startX - endX) == 1 and abs(startY - endY) == 2:
             return True
-        else if abs(startX - endX) == 1 and abs(startY - endY) == 2:
+        elif abs(startX - endX) == 1 and abs(startY - endY) == 2:
             return True
         else:
             return False
