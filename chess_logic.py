@@ -33,7 +33,8 @@ class Board:
             self.grid[1][i] = Piece(PieceType.PAWN, Team.BLACK)
             self.grid[6][i] = Piece(PieceType.PAWN, Team.WHITE)
             self.grid[7][i] = Piece(pieceOrder[i], Team.WHITE)
-        self.length = 400
+        #self.length = 400
+        #self.length = 635
         #self.diagonal = 898
     def move_piece(startX, startY, endX, endY):
         #if not is_move_legal(startX, startY, endX, endY):
@@ -76,8 +77,8 @@ class Board:
         else:
             return False
 
-    def findcoordinates(self,command):
-        coordinates = []
-        for coord in command:
-            coordinates.append(self.length/2 + (int(coord)-1)*self.length)
-        return coordinates
+    # def findcoordinates(self, command):
+    #     coordinates = []
+    #     for coord in command:
+    #         coordinates.append(self.length/2 + (int(coord)-1)*self.length)
+    #     return coordinates

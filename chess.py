@@ -4,13 +4,18 @@ import time
 
 board = Board()
 
+#command = parse_speech.get_command()
+#board.cnc.move_to(-45, 0)
+
+
 #board.cnc.move_to(-100,100)
 try:
     while True:
         command = parse_speech.get_command()
-        if command:
-            coordinates = board.findcoordinates(command)
-            board.cnc.move_to(-1*coordinates[2], coordinates[3])
-            time.sleep(5)
+        # if command:
+        #     board.cnc.move_to(-1*command[0], command[1])
+        #     time.sleep(5)
+        #     board.cnc.move_to(-1*command[2], command[3])
+        #     time.sleep(10)
 except:
     board.cnc.move_to(0,0)

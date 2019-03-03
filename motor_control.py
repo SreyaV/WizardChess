@@ -16,6 +16,8 @@ class MotorController:
         self.serial_instance.write("G90" + '\n')  # Send g-code block to grbl
         grbl_out = self.serial_instance.readline()  # Wait for grbl response with carriage return
         print(' : ' + grbl_out.strip())
+        self.xlength = 40
+        self.ylength = 45
 
     def move_to(self, x, y, feedrate=1000.0):
         """
@@ -25,6 +27,9 @@ class MotorController:
         :param feedrate: feedrate of move in mm/min
         :return:
         """
+
+        # x= self.xlength/2 + (x-1)*self.xlength
+        # y = self.ylength/2 + (y-1)*self.ylength
         # Stream g-code to grbl
         command_buffer = "G01 X{} Y{} F{}".format(x, y, feedrate)
         print('Sending: ' + command_buffer)
@@ -37,9 +42,10 @@ class MotorController:
         lastY = 0
 
         time_to_wait = self.dist(x, y, lastX, lastY) / feedrate * 60.0 + 0.25
-        time.sleep(time_to_wait)
+        time.sleep(5)
 
     def __del__(self):
+
         # Close file and serial port
         self.serial_instance.close()
 
