@@ -1,47 +1,55 @@
-from enum import Enum
 from motor_control import MotorController
 
-IN_PER_SEC = 150.0
-FAST_FEED_RATE = 2000
-SLOW_FEED_RATE =  750
-
-class PieceType(Enum):
-    PAWN = 1
-    ROOK = 2
-    KNIGHT = 3
-    BISHOP = 4
-    QUEEN = 5
-    KING = 6
-
-class Team(Enum):
-    WHITE = 1
-    BLACK = 2
-
-class Piece:
-    def __init__(self, type, team):
-        self.type = type
-        self.team = team
-
-class Board:
+# Rank = row = y
+# File = column = x
+class Game:
     def __init__(self):
-        self.grid = [[None] * 8 for _ in range(8)]
+        self.board = chess.Board()
         self.cnc = MotorController()
-        pieceOrder = [PieceType.ROOK, PieceType.KNIGHT, PieceType.BISHOP, PieceType.QUEEN,\
-            PieceType.KING, PieceType.BISHOP, PieceType.KNIGHT, PieceType.ROOK]
-        for i in range(8):
-            self.grid[0][i] = Piece(pieceOrder[i], Team.BLACK)
-            self.grid[1][i] = Piece(PieceType.PAWN, Team.BLACK)
-            self.grid[6][i] = Piece(PieceType.PAWN, Team.WHITE)
-            self.grid[7][i] = Piece(pieceOrder[i], Team.WHITE)
-        #self.length = 400
-        #self.length = 635
-        #self.diagonal = 898
-    def move_piece(startX, startY, endX, endY):
-        #if not is_move_legal(startX, startY, endX, endY):
-            #return False
-        if self.grid[endX][endY] != None:
-            self.cnc.move_to(endX, endY, FAST_FEED_RATE)
+
+        self.xa = 0
+        self.xh = 70
+        self.y1 = 0
+        self.y8 = 70
+
+        self.dx_kill = 0
+        self.dy_kill = 0
+
+    def move_to(rank, file, fast, kill=False):
+        x = file / 7.0 * (self.xh - self.xa) + self.xa
+        y = rank / 7.0 * (self.y8 - self.y1) + self.y1
+        if kill:
+            x = x + self.dx_kill
+            y = y + self.dy_kill
+        self.cnc.move_to(x, y, fast)
+
+    def move_piece(self, uci):
+
+        move = chess.Move.from_uci(uci)
+
+        if move not in self.board.legal_moves:
+            print "Move not legal"
+            return False
+        else if self.board.is_en_passant(move):
+            print "En Passant not supported"
+            return False
+        else if self.board.is_castling(move):
+            print "Castling not supported"
+            return False
+
+        from_file = square_file(move.from_square)
+        from_rank = square_rank(move.from_square)
+        to_file = square_file(move.to_square)
+        to_rank = square_rank(move.to_square)
+
+        if self.board.is_capture(move):
+            self.move_to(to_rank, to_file, True)
             self.cnc.kill_piece()
+
+        x, y = get_xy_for(to_rank, to_file, True)
+
+        self.cnc.move_to(x, y, )
+
 
         self.cnc.move_to(startX, startY, FAST_FEED_RATE)
         self.cnc.engage_magnet(True)
