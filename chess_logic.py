@@ -1,4 +1,5 @@
-from motor_control import MotorController
+# from motor_control import MotorController
+from motor_control_simulator import MotorController
 
 # Rank = row = y
 # File = column = x
@@ -43,50 +44,41 @@ class Game:
         to_rank = square_rank(move.to_square)
 
         if self.board.is_capture(move):
-            self.move_to(to_rank, to_file, True)
+            self.move_to(to_rank, to_file, True, True)
             self.cnc.kill_piece()
 
-        x, y = get_xy_for(to_rank, to_file, True)
-
-        self.cnc.move_to(x, y, )
-
-
-        self.cnc.move_to(startX, startY, FAST_FEED_RATE)
+        self.move_to(from_rank, from_file, True)
         self.cnc.engage_magnet(True)
-        if startX == endX or startY == endY or abs(startY - endY) == abs(startX - endX):
-            # if moving horizontally, vertically, or diagonally
-            self.cnc.move_to(endX, endY, SLOW_FEED_RATE)
-        elif abs(startX - endX) == 1 and abs(startY - endY) == 2:
-            self.cnc.move_to(0.5 * (startX + endX), startY, SLOW_FEED_RATE)
-            self.cnc.move_to(0.5 * (startX + endX), endY, SLOW_FEED_RATE)
-            self.cnc.move_to(endX, endY, SLOW_FEED_RATE)
-        elif abs(startX - endX) == 1 and abs(startY - endY) == 2:
-            self.cnc.move_to(startX, (startY + endY) * 0.5, SLOW_FEED_RATE)
-            self.cnc.move_to(endX, (startY + endY) * 0.5, SLOW_FEED_RATE)
-            self.cnc.move_to(endX, endY, SLOW_FEED_RATE)
+
+        if from_rank == to_rank or from_file == to_file or abs(to_file - from_file) == abs(to_rank - from_rank):
+            # if moving horizontally, vertically, or diagonally, go straight there
+            self.move_to(to_rank, to_file, False)
+        elif abs(to_rank - from_rank) == 1 and abs(to_file - from_file) == 2:
+            #knight move 1 rank 2 files
+            self.move_to(0.5 * (from_rank + to_rank), from_file, False)
+            self.move_to(0.5 * (from_rank + to_rank), to_file, False)
+            self.move_to(to_rank, to_file, False)
+        elif abs(to_file - from_file) == 1 and abs(to_rank - from_rank) == 2:
+            #knight move 1 file 2 ranks
+            self.move_to(from_rank, (from_file + to_file) * 0.5, False)
+            self.move_to(to_rank, (from_file + to_file) * 0.5, False)
+            self.move_to(to_rank, to_file, False)
         else:
-            self.cnc.engage_magnet(False)
-            return False
+            print "unexpected error, impossible move" 
+            raise 
         self.cnc.engage_magnet(False)
 
-        self.grid[endX][endY] = self.grid[startX][startY]
-        self.grid[startX][startY] = None
+        self.board.push(move)
 
         return True
 
-    def is_move_legal(startX, startY, endX, endY):
-        # TODO make work properly
-        if startX == endX or startY == endY or abs(startY - endY) == abs(startX - endX):
-            return True
-        elif abs(startX - endX) == 1 and abs(startY - endY) == 2:
-            return True
-        elif abs(startX - endX) == 1 and abs(startY - endY) == 2:
-            return True
-        else:
-            return False
+    def test(self):
+        test_moves = ['d2d4', 'c7c6', 'g1f3', 'e7e6', 'c1f4', 'c6c5', 'e2e3', 'd7d5', 'd1d3', 'c5d4', 'e3d4']
+        for move in test_moves:
+            self.move_piece(move)
+            # sleep(2)
 
-    # def findcoordinates(self, command):
-    #     coordinates = []
-    #     for coord in command:
-    #         coordinates.append(self.length/2 + (int(coord)-1)*self.length)
-    #     return coordinates
+if __name__ == '__main__':
+    game = Game()
+    game.test()
+

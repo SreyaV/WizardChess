@@ -17,5 +17,4 @@ try:
         #     time.sleep(5)
         #     board.cnc.move_to(-1*command[2], command[3])
         #     time.sleep(10)
-except:
-    board.cnc.move_to(0,0)
+
