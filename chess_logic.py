@@ -1,4 +1,5 @@
 # from motor_control import MotorController
+import chess
 from motor_control_simulator import MotorController
 
 # Rank = row = y
@@ -13,10 +14,10 @@ class Game:
         self.y1 = 0
         self.y8 = 70
 
-        self.dx_kill = 0
-        self.dy_kill = 0
+        self.dx_kill = 2
+        self.dy_kill = -2
 
-    def move_to(rank, file, fast, kill=False):
+    def move_to(self, rank, file, fast, kill=False):
         x = file / 7.0 * (self.xh - self.xa) + self.xa
         y = rank / 7.0 * (self.y8 - self.y1) + self.y1
         if kill:
@@ -29,19 +30,19 @@ class Game:
         move = chess.Move.from_uci(uci)
 
         if move not in self.board.legal_moves:
-            print "Move not legal"
+            print("Move not legal")
             return False
-        else if self.board.is_en_passant(move):
-            print "En Passant not supported"
+        elif self.board.is_en_passant(move):
+            print("En Passant not supported")
             return False
-        else if self.board.is_castling(move):
-            print "Castling not supported"
+        elif self.board.is_castling(move):
+            print("Castling not supported")
             return False
 
-        from_file = square_file(move.from_square)
-        from_rank = square_rank(move.from_square)
-        to_file = square_file(move.to_square)
-        to_rank = square_rank(move.to_square)
+        from_file = chess.square_file(move.from_square)
+        from_rank = chess.square_rank(move.from_square)
+        to_file = chess.square_file(move.to_square)
+        to_rank = chess.square_rank(move.to_square)
 
         if self.board.is_capture(move):
             self.move_to(to_rank, to_file, True, True)
@@ -64,7 +65,7 @@ class Game:
             self.move_to(to_rank, (from_file + to_file) * 0.5, False)
             self.move_to(to_rank, to_file, False)
         else:
-            print "unexpected error, impossible move" 
+            print("unexpected error, impossible move")
             raise 
         self.cnc.engage_magnet(False)
 
