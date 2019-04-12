@@ -1,7 +1,6 @@
 import speech_recognition as sr
 import json
 #import pyttsx
-import objc
 #engine = pyttsx.init()
 from os import system
 from gtts import gTTS
@@ -47,10 +46,10 @@ def read_json(path):
 
 def voice_input(audio, r):
     # recognize speech using Google Cloud Speech
-    #GOOGLE_CLOUD_SPEECH_CREDENTIALS = 
+    GOOGLE_CLOUD_SPEECH_CREDENTIALS = r"vernal-byway-233402-ebd72f47d369.json"
     try:
         speech = (r.recognize_google_cloud(audio, preferred_phrases = ["alpha", "bravo", "charlie", "delta", "echo", "foxtrot", "golf", "hotel", "one", "two", "three", "four", "five", "six", "seven", "eight", "move"], credentials_json=json.dumps(read_json(GOOGLE_CLOUD_SPEECH_CREDENTIALS))))
-        #speech = (r.recognize_google_cloud(audio, credentials_json=json.dumps(read_json(GOOGLE_CLOUD_SPEECH_CREDENTIALS)))
+        #speech = (r.recognize_google_cloud(audio, credentials_json=json.dumps(read_json(GOOGLE_CLOUD_SPEECH_CREDENTIALS))))
         print(speech)
         return speech
         #print("Google Cloud Speech thinks you said " + r.recognize_google_cloud(audio, credentials_json=json.dumps(read_json(GOOGLE_CLOUD_SPEECH_CREDENTIALS))))
@@ -72,7 +71,7 @@ def common_letters(word, arr):
     if word in arr.values():
         return word
     for possibility in arr.keys():
-        print(counter)
+        #print(counter)
         for i in word:
             if i in possibility:
                 counter = counter + 1
@@ -118,10 +117,11 @@ def get_command():
     r = sr.Recognizer()
     with sr.Microphone() as source:
         r.adjust_for_ambient_noise(source)  # we only need to calibrate once, before we start listening
-        os.system("mpg321 next.mp3")
+        os.system("next.mp3")
         print("Talk now")
         audio = r.listen(source)
-        #audio = r.listen(source, snowboy_configuration = snowboy)
+        #audio = r.listen(source, snowboy_configuration = snowboy)'
+    print("Processing")
     speech = voice_input(audio, r)
     #speech = "Alpha One move hotel to"
     command = parse_speech(speech)
@@ -129,21 +129,25 @@ def get_command():
     if command:
         tts = gTTS(text=(" ".join(command)), lang='en')
         tts.save("move.mp3")
-        os.system("mpg321 move.mp3")
+        os.system("move.mp3")
         #system('say '+command)
         #engine.say(command)
         #engine.runAndWait()
     else:
-        os.system("mpg321 error.mp3")
+        os.system("error.mp3")
         return None
         #engine.say("Sorry, I didn't get that. Please try again")
         #engine.runAndWait()
 
-    for i in range(0, len(command)):
-        if command[i] in alphanumeric:
-            command[i] = alphanumeric[command[i]]
+    # for i in range(0, len(command)):
+    #     if command[i] in alphanumeric:
+    #         command[i] = alphanumeric[command[i]]
     command = command[ :2] + command[3: ]
-    return command
+    print(command)
+    ret_str = ""
+    for element in command:
+        ret_str+=element
+    return ret_str
 
 
 snowboy = ("/Users/jlchew/Downloads/osx-x86_64-1.1.1", ["/Users/jlchew/Downloads/osx-x86_64-1.1.1/chess.pmdl"])
