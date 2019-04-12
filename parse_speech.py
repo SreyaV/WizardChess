@@ -7,7 +7,7 @@ from gtts import gTTS
 import os
 
 
-#os.system("mpg321 error.mp3")
+#os.system("afplay mpg321 error.mp3")
 
 # obtain audio from the microphone
 
@@ -117,7 +117,7 @@ def get_command():
     r = sr.Recognizer()
     with sr.Microphone() as source:
         r.adjust_for_ambient_noise(source)  # we only need to calibrate once, before we start listening
-        os.system("next.mp3")
+        os.system("afplay next.mp3")
         print("Talk now")
         audio = r.listen(source)
         #audio = r.listen(source, snowboy_configuration = snowboy)'
@@ -129,12 +129,12 @@ def get_command():
     if command:
         tts = gTTS(text=(" ".join(command)), lang='en')
         tts.save("move.mp3")
-        os.system("move.mp3")
+        os.system("afplay move.mp3")
         #system('say '+command)
         #engine.say(command)
         #engine.runAndWait()
     else:
-        os.system("error.mp3")
+        os.system("afplay error.mp3")
         return None
         #engine.say("Sorry, I didn't get that. Please try again")
         #engine.runAndWait()
@@ -147,7 +147,7 @@ def get_command():
     ret_str = ""
     for element in command:
         ret_str+=element
-    return ret_str
+    return ret_str.lower()
 
 
 snowboy = ("/Users/jlchew/Downloads/osx-x86_64-1.1.1", ["/Users/jlchew/Downloads/osx-x86_64-1.1.1/chess.pmdl"])
