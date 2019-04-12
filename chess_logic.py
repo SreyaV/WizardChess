@@ -15,8 +15,8 @@ class Game:
         self.y1 = 4
         self.y8 = 73
 
-        self.dx_kill = 4.5
-        self.dy_kill = 1.5
+        self.dx_kill = 3.3
+        self.dy_kill = 1.7
 
     def move_to(self, rank, file, fast, kill=False):
         x = file / 7.0 * (self.xh - self.xa) + self.xa
@@ -75,7 +75,8 @@ class Game:
         return True
 
     def test(self):
-        test_moves = ['d2d4', 'c7c6', 'g1f3', 'e7e6', 'c1f4', 'c6c5', 'e2e3', 'd7d5', 'd1d3', 'c5d4', 'e3d4']
+        # test_moves = ['d2d4', 'c7c6', 'g1f3', 'e7e6', 'c1f4', 'c6c5', 'e2e3', 'd7d5', 'd1d3', 'c5d4', 'e3d4']
+        test_moves = ['d2d4', 'e7e5', 'd4e5']
         for move in test_moves:
             self.move_piece(move)
             time.sleep(5)

@@ -11,7 +11,7 @@ class MotorController:
         self.feedrate_xy_slow = 200
 
         self.z_engaged = -1.1
-        self.z_disengaged = 1.0
+        self.z_disengaged = 0.8
         self.z_launch = 2.2
 
         # Open grbl serial port
@@ -100,6 +100,7 @@ class MotorController:
         self.set_solenoid(True)
         self.set_z(self.z_launch)
         self.set_solenoid(False)
+        self.set_z(self.z_disengaged)
 
     def test(self):
         self.move_to(5, 10, True)
