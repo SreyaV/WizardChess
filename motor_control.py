@@ -5,6 +5,15 @@ import math
 
 class MotorController:
     def __init__(self):
+
+        self.feedrate_z = 500
+        self.feedrate_xy_fast = 500
+        self.feedrate_xy_slow = 200
+
+        self.z_engaged = -1.1
+        self.z_disengaged = 1.0
+        self.z_launch = 2.2
+
         # Open grbl serial port
         self.serial_instance = serial.Serial('/dev/tty.usbserial-DN05JLOK', 115200)
 
@@ -16,16 +25,7 @@ class MotorController:
         self.serial_instance.write(("G90" + '\n').encode())  # Send g-code block to grbl
         grbl_out = self.serial_instance.readline()  # Wait for grbl response with carriage return
         print(' : ' + grbl_out.decode().strip())
-        self.xlength = 40
-        self.ylength = 45
-
-        self.feedrate_z = 500
-        self.feedrate_xy_fast = 500
-        self.feedrate_xy_slow = 250
-
-        self.z_engaged = -0.5
-        self.z_disengaged = 1.0
-        self.z_launch = 2.0
+        
         self.home()
 
     def home(self):
@@ -48,8 +48,6 @@ class MotorController:
         :return:
         """
 
-        # x= self.xlength/2 + (x-1)*self.xlength
-        # y = self.ylength/2 + (y-1)*self.ylength
         # Stream g-code to grbl
         feedrate = self.feedrate_xy_fast if fast else self.feedrate_xy_slow
         command_buffer = "G01 X{} Y{} F{}".format(x, y, feedrate)
